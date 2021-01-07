@@ -46,7 +46,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(500))
-    #TODO: past_shows to be filled from shows or artists table
+    shows = db.relationship('Show', backref = 'venue', lazy=True)
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -64,7 +64,7 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(500))
-    # TODO: implement relationship with shows
+    shows = db.relationship('Show', backref = 'artist', lazy = True )
 
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
@@ -72,8 +72,8 @@ class Artist(db.Model):
 class Show(db.Model):
   __tablename__ = 'Show'
   id = db.Column(db.Integer, primary_key=True)
-  #artist_id
-  #venue_id
+  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
+  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
   start_time = db.Column(db.DateTime)
 #----------------------------------------------------------------------------#
 # Filters.
