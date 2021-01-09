@@ -21,6 +21,9 @@ class Venue(db.Model):
     seeking_description = db.Column(db.String(500))
     shows = db.relationship('Show', backref='venue', lazy=True)
 
+    def __repr__(self):
+        return "Venue id: " + str(self.id) + "name: " + self.name
+
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -40,6 +43,9 @@ class Artist(db.Model):
     seeking_description = db.Column(db.String(500))
     shows = db.relationship('Show', backref='artist', lazy=True)
 
+    def __repr__(self):
+        return "Artist id: " + str(self.id) + "name: " + self.name
+
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
@@ -49,3 +55,7 @@ class Show(db.Model):
   artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
   venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
   start_time = db.Column(db.DateTime)
+
+def __repr__(self):
+    log = "Show id: " + str(self.id) + "artist_id: " + str(self.artist_id)
+    return log
