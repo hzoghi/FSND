@@ -125,6 +125,7 @@ sdata5 = {
 
 shows = [sdata1, sdata2, sdata3, sdata4]
 
+#TODO -> Rewrite using orm level
 import psycopg2, psycopg2.extras
 
 
@@ -132,20 +133,25 @@ import psycopg2, psycopg2.extras
 def load_table(table_name = 'test_table', data_list=[{"A": 1, "B": "2"}, {"A": 10, "B": "20"}]):
     fields = ','.join(field for field in data_list[0].keys())
     values_list = []
-    print(fields)
     for d in data_list:
         vals = tuple(v for v in d.values())
         values_list.append(vals)
     
-    sql_binding = f"INSERT INTO \"{table_name}\" ({fields}) VALUES "
-    
-    # conn = psycopg2.connect(dbname="fyyur", user="hamed.zoghi")
-    # cur = conn.cursor()
-    
-    # psycopg2.extras.execute_values(cur, sql_binding + "%s",  values_list)
-
-    # cur.close()
+    sql_binding = "INSERT INTO \"%s\" (%s) VALUES " %(table_name, fields)
     print(sql_binding)
-    print(values_list)
+    conn = psycopg2.connect(dbname="fyyur", user="hamed.zoghi")
+    cur = conn.cursor()
+    for row in values_list:
+        print(row)
+        cur.execute(sql_binding + "%s", str(row))
+
+    # psycopg2.extras.execute_values(
+    #     cur, sql_binding + "%s" + ";",  values_list, template=None, page_size=100, fetch=True)
+
+    cur.close()
+    # print(fields)
+    # print(len(values_list[0]))
+    # print(sql_binding)
+    # print(values_list)
 
     return
