@@ -1,8 +1,9 @@
 """
-Scripts to load the database
+Scripts to load the mock data into the database
+The mock data is extracted from the existing forms
 """
 #--------------------------------------------------------------------
-# Venue
+# Venue - mock data
 #--------------------------------------------------------------------
 vdata1 = {
     "id": 1,
@@ -47,7 +48,7 @@ vdata3 = {
 venues = [vdata1, vdata2, vdata3]
 
 #-------------------------------------------------
-#Artist
+#Artist - mock data
 #-------------------------------------------------
 adata1 = {
     "id": 1,
@@ -86,72 +87,85 @@ adata3 = {
 artists = [adata1, adata2, adata3]
 
 #-------------------------------------------------
-#Show
+#Show - mock data
 #-------------------------------------------------
 sdata1 = {
     "id": 1,
     "artist_id": 1,
-    "venue_id": 1,
+    "venue_id": 7,
     "start_time": "2019-05-21T21:30:00.000Z"
 }
 
 sdata2 = {
     "id": 2,
     "artist_id": 2,
-    "venue_id": 3,
+    "venue_id": 9,
     "start_time": "2019-06-15T23:00:00.000Z"
 }
 
 sdata3 = {
     "id": 3,
     "artist_id": 3,
-    "venue_id": 3,
+    "venue_id": 9,
     "start_time": "2035-04-01T20:00:00.000Z"
 }
 
 sdata4 = {
     "id": 4,
     "artist_id": 3,
-    "venue_id": 3,
+    "venue_id": 9,
     "start_time": "2035-04-08T20:00:00.000Z"
 }
 
 sdata5 = {
     "id": 5,
     "artist_id": 3,
-    "venue_id": 3,
+    "venue_id": 9,
     "start_time": "2035-04-15T20:00:00.000Z"
 }
 
 shows = [sdata1, sdata2, sdata3, sdata4]
 
-#TODO -> Rewrite using orm level
+#--------------------------------------------------------
 import psycopg2, psycopg2.extras
 
-
-
 def load_table(table_name = 'test_table', data_list=[{"A": 1, "B": "2"}, {"A": 10, "B": "20"}]):
-    fields = ','.join(field for field in data_list[0].keys())
-    values_list = []
-    for d in data_list:
-        vals = tuple(v for v in d.values())
-        values_list.append(vals)
+    """This function takes the name of the table as a string along with the list of records 
+    and persists it in the exiting tables in the db
+
+    Args:
+        table_name (str, optional):
+            name of the table in the database.
+            Defaults to 'test_table'.
+        data_list (list, optional):
+            List of dictionaries where each dictionary is a record.
+            Defaults to [{"A": 1, "B": "2"}, {"A": 10, "B": "20"}].
+    """
+    #modify this line to match your database credentials
+    conn = psycopg2.connect(dbname="not_fyyur", user="none")
     
-    sql_binding = "INSERT INTO \"%s\" (%s) VALUES " %(table_name, fields)
-    print(sql_binding)
-    conn = psycopg2.connect(dbname="fyyur", user="hamed.zoghi")
     cur = conn.cursor()
-    for row in values_list:
-        print(row)
-        cur.execute(sql_binding + "%s", str(row))
+    for d in data_list:
+        keys = []
+        values = []
+        d.pop("id")
+        for key, value in d.items():
+            keys.append(key)
+            values.append(value)
+        keys_str = ','.join(str(x) for x in keys)
+        values_tuple = tuple(values)
+        percents = ','.join(['%s']*len(keys))
+        sql_binding = "INSERT INTO %s (%s) VALUES (%s);" %(table_name, keys_str, percents)
+        insert = cur.mogrify(sql_binding, values_tuple)
+        cur.execute(insert)
 
-    # psycopg2.extras.execute_values(
-    #     cur, sql_binding + "%s" + ";",  values_list, template=None, page_size=100, fetch=True)
-
+    conn.commit()
     cur.close()
-    # print(fields)
-    # print(len(values_list[0]))
-    # print(sql_binding)
-    # print(values_list)
-
+    conn.close()
     return
+
+#If you ar running this file directly uncoment the following three lines to call the function
+
+#load_table("venues", venues)
+#load_table("artists", artists)
+#load_table("shows", shows)

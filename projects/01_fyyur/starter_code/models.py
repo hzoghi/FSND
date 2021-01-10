@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 
 class Venue(db.Model):
-    __tablename__ = 'Venue'
+    __tablename__ = 'venues'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -26,7 +26,7 @@ class Venue(db.Model):
 
 
 class Artist(db.Model):
-    __tablename__ = 'Artist'
+    __tablename__ = 'artists'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -50,10 +50,10 @@ class Artist(db.Model):
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 class Show(db.Model):
-  __tablename__ = 'Show'
+  __tablename__ = 'shows'
   id = db.Column(db.Integer, primary_key=True)
-  artist_id = db.Column(db.Integer, db.ForeignKey('Artist.id'))
-  venue_id = db.Column(db.Integer, db.ForeignKey('Venue.id'))
+  artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'))
+  venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'))
   start_time = db.Column(db.DateTime)
 
 def __repr__(self):
