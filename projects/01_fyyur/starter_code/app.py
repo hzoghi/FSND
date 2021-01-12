@@ -80,11 +80,9 @@ def venues():
     for record in venue_records:
       for dictionary in data:
         if dictionary["city"] == record.city and dictionary["state"] == record.state:
-          #TODO this needs to be fixed
-          upcoming_shows = Show.query.filter_by(venue_id = record.id).filter(Show.start_time > datetime.datetime.now()).count()
+          upcoming_shows = Show.query.filter_by(venue_id = record.id).filter(Show.start_time > datetime.now()).count()
           dictionary["venues"].append({"id": record.id, "name": record.name, 
           "num_upcoming_shows": upcoming_shows}) 
-          #TODO I have fixed the num_upcoming_shows cuz the query is not right currently
   
   except:
     error = True
