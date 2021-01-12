@@ -3,6 +3,7 @@
 #----------------------------------------------------------------------------#
 
 import json
+import sys
 import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
@@ -14,6 +15,7 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
+from datetime import datetime
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -61,7 +63,36 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
+
+  error = False
+  data = []
+  try:
+    venue_records = db.session.query(Venue).all()
+    locations = [(record.city, record.state) for record in venue_records]
+    unique_locations = set(locations)  
+    for location in unique_locations:
+      location_data = {}
+      location_data["city"] = location[0]
+      location_data["state"] = location[1]
+      location_data["venues"]=[]
+      data.append(location_data)
+    
+    for record in venue_records:
+      for dictionary in data:
+        if dictionary["city"] == record.city and dictionary["state"] == record.state:
+          #TODO this needs to be fixed
+          upcoming_shows = Show.query.filter_by(venue_id = record.id).filter(Show.start_time > datetime.datetime.now()).count()
+          dictionary["venues"].append({"id": record.id, "name": record.name, 
+          "num_upcoming_shows": upcoming_shows}) 
+          #TODO I have fixed the num_upcoming_shows cuz the query is not right currently
+  
+  except:
+    error = True
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  
+  mock_data=[{
     "city": "San Francisco",
     "state": "CA",
     "venues": [{
@@ -82,7 +113,7 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
-  return render_template('pages/venues.html', areas=data);
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
