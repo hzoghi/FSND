@@ -143,6 +143,54 @@ def search_venues():
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
+
+  past_shows = db.session.query(Artist, Show).join(Show).join(Venue).filter(
+    Show.venue_id == venue_id,
+    Show.artist_id == Artist.id,
+    Show.start_time < datetime.now()
+  ).all()
+
+  past_shows_list = [{
+    'artist_id': artist.id,
+    "artist_name": artist.name,
+    "artist_image_link": artist.image_link,
+    "start_time": show.start_time.strftime('%m/%d/%Y')
+  } for artist, show in past_shows]
+
+  upcoming_shows = db.session.query(Artist, Show).join(Show).join(Venue).filter(
+      Show.venue_id == venue_id,
+      Show.artist_id == Artist.id,
+      Show.start_time > datetime.now()
+  ).all()
+
+  upcoming_shows_list = [{
+      'artist_id': artist.id,
+      "artist_name": artist.name,
+      "artist_image_link": artist.image_link,
+      "start_time": show.start_time.strftime('%m/%d/%Y')
+  } for artist, show in upcoming_shows]
+  
+  
+  
+  venue_record = Venue.query.get(venue_id)
+  data = {
+    "id": venue_id,
+    "name": venue_record.name,
+    "genres": venue_record.genres,
+    "address": venue_record.address,
+    "city": venue_record.city,
+    "state": venue_record.state,
+    "phone": venue_record.phone,
+    "website": venue_record.website,
+    "seeking_talent": venue_record.seeking_talent,
+    "seeking_description": venue_record.seeking_description,
+    "image_link": venue_record.image_link,
+    "past_shows": past_shows_list,
+    "upcoming_shows": upcoming_shows_list,
+    "past_shows_count": len(past_shows_list),
+    "upcoming_shows_count": len(upcoming_shows_list)
+  }
+
   data1={
     "id": 1,
     "name": "The Musical Hop",
@@ -220,7 +268,7 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
+  #mock_data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
   return render_template('pages/show_venue.html', venue=data)
 
 #  Create Venue
