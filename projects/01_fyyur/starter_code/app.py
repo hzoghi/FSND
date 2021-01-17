@@ -58,7 +58,7 @@ def index():
 
 #  Venues
 #  ----------------------------------------------------------------
-
+#Done
 @app.route('/venues')
 def venues():
   # TODO: replace with real venues data.
@@ -113,12 +113,23 @@ def venues():
   }]
   return render_template('pages/venues.html', areas=data)
 
+#Done
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
+  search = request.form.get('search_term', '')
+  venues = Venue.query.filter(Venue.name.ilike("%"+search+"%")).all()
+  data = []
+  for venue in venues:
+    upcoming_shows = Show.query.filter_by(venue_id=venue.id).filter(
+        Show.start_time > datetime.now()).count()
+    data.append({"id": venue.id, "name": venue.name,
+                 "num_upcoming_shows": upcoming_shows})
+
+  response = {"count": len(data), "data": data}
+  mock_response={
     "count": 1,
     "data": [{
       "id": 2,
