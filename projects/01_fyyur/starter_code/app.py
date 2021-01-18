@@ -295,15 +295,15 @@ def create_venue_submission():
       description = data.seeking_description
     
     new_venue = Venue(
-      name = data.name,
-      city = data.city,
-      state = data.state,
-      address = data.address,
-      image_link = data.image_link,
-      genres = data.genres,
-      facebook_link = data.facebook_link,
-      website = data.website,
-      phone = data.phone,
+      name = data.name.data,
+      city = data.city.data,
+      state = data.state.data,
+      address = data.address.data,
+      image_link = data.image_link.data,
+      genres = data.genres.data,
+      facebook_link = data.facebook_link.data,
+      website = data.website.data,
+      phone = data.phone.data,
       seeking_talent = talent,
       seeking_description = description
     )
