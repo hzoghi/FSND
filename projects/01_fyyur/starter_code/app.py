@@ -309,15 +309,18 @@ def create_venue_submission():
     )
     db.session.add(new_venue)
     db.session.commit()
-    flash('Venue ' + request.form['name'] + ' was successfully listed!')
+    
   except:
-    error = True
-    flash('An error occurred. Venue ' + data.name + ' could not be listed.')
+    error = True 
     db.session.rollback()
     print(sys.exc_info())
 
   finally:
     db.session.close()
+  if error:
+    flash('An error occurred. Venue ' + data.name + ' could not be listed.')
+  else:
+    flash('Venue ' + request.form['name'] + ' was successfully listed!')
 
   # on successful db insert, flash success
   
