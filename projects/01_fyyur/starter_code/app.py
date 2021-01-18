@@ -287,6 +287,13 @@ def create_venue_submission():
   error = False
   data = VenueForm(request.form)
   try:
+    if 'seeking_talent' not in request.form:
+      talent = False
+      description = ''
+    else:
+      talent = True
+      description = data.seeking_description
+    
     new_venue = Venue(
       name = data.name,
       city = data.city,
@@ -296,8 +303,9 @@ def create_venue_submission():
       genres = data.genres,
       facebook_link = data.facebook_link,
       website = data.website,
-      seeking_talent = data.seeking_talent,
-      seeking_description = data.seking_description
+      phone = data.phone,
+      seeking_talent = talent,
+      seeking_description = description
     )
     db.session.add(new_venue)
     db.session.commit()
