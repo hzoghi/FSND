@@ -280,6 +280,7 @@ def create_venue_form():
   form = VenueForm()
   return render_template('forms/new_venue.html', form=form)
 
+#Done
 @app.route('/venues/create', methods=['POST'])
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
@@ -329,6 +330,7 @@ def create_venue_submission():
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
   return render_template('pages/home.html')
 
+#Done
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
@@ -351,10 +353,14 @@ def delete_venue(venue_id):
 
 #  Artists
 #  ----------------------------------------------------------------
+#Done
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
+  artists_query = db.session.query(Artist.id, Artist.name).all()
+  data = [q._asdict() for q in artists_query]
+  #Mock data
+  data1=[{
     "id": 4,
     "name": "Guns N Petals",
   }, {
