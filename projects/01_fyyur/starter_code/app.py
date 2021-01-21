@@ -182,6 +182,7 @@ def show_venue(venue_id):
     "state": venue_record.state,
     "phone": venue_record.phone,
     "website": venue_record.website,
+    "facebook_link":venue_record.facebook_link,
     "seeking_talent": venue_record.seeking_talent,
     "seeking_description": venue_record.seeking_description,
     "image_link": venue_record.image_link,
@@ -372,6 +373,7 @@ def artists():
   }]
   return render_template('pages/artists.html', artists=data)
 
+#Done
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
@@ -402,6 +404,52 @@ def search_artists():
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
+  
+  past_shows = db.session.query(Venue, Show).join(Show).join(Artist).filter(
+    Show.artist_id == artist_id,
+    Show.venue_id == Venue.id, 
+    Show.start_time < datetime.now()
+  ).all()
+
+  past_shows_list = [{
+    'venue_id': artist_id,
+    'venue_name': venue.name,
+    'venue_image_link': venue.image_link,
+    'start_time': show.start_time.strftime('%m/%d/%Y')
+  } for venue, show in past_shows]
+  
+  upcoming_shows = db.session.query(Venue, Show).join(Show).join(Artist).filter(
+    Show.artist_id == artist_id,
+    Show.venue_id == Venue.id,
+    Show.start_time > datetime.now()
+  ).all()
+  
+  upcoming_shows_list = [{
+    'venue_id': artist_id,
+    'venue_name': venue.name,
+    'venue_image_link': venue.image_link,
+    'start_time': show.start_time.strftime('%m/%d/%Y')
+  } for venue, show in upcoming_shows]
+
+  artist_record = Artist.query.get(artist_id)
+  data = {
+    "id": artist_record.id,
+    "name": artist_record.name,
+    "genres": artist_record.genres,
+    "city": artist_record.city,
+    "state": artist_record.state,
+    "phone": artist_record.phone,
+    "website": artist_record.website,
+    "facebook_link": artist_record.facebook_link,
+    "seeking_venue": artist_record.seeking_venue,
+    "seeking_description": artist_record.seeking_description,
+    "image_link": artist_record.image_link,
+    "past_shows" : past_shows_list,
+    "upcoming_shows" : upcoming_shows_list,
+    "past_shows_count" : len(past_shows_list),
+    "upcoming_shows_count" : len(past_shows_list)
+  } 
+
   data1={
     "id": 4,
     "name": "Guns N Petals",
@@ -473,7 +521,7 @@ def show_artist(artist_id):
     "past_shows_count": 0,
     "upcoming_shows_count": 3,
   }
-  data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
+  #mock_data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
   return render_template('pages/show_artist.html', artist=data)
 
 #  Update
