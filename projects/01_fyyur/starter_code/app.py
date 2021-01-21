@@ -290,10 +290,10 @@ def create_venue_submission():
   data = VenueForm(request.form)
   try:
     if 'seeking_talent' not in request.form:
-      talent = False
+      seeking = False
       description = ''
     else:
-      talent = True
+      seeking = True
       description = data.seeking_description
     
     new_venue = Venue(
@@ -306,7 +306,7 @@ def create_venue_submission():
       facebook_link = data.facebook_link.data,
       website = data.website.data,
       phone = data.phone.data,
-      seeking_talent = talent,
+      seeking_talent = seeking,
       seeking_description = description
     )
     db.session.add(new_venue)
@@ -526,6 +526,7 @@ def show_artist(artist_id):
 
 #  Update
 #  ----------------------------------------------------------------
+#Done
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   
@@ -552,7 +553,22 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
+  
+  form = ArtistForm(request.form)
+  error = False
 
+  try:
+    artist = Artist.query.first_or_404(artist_id)
+    form.populate_obj(artist)    
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+    flash("Something went wrong while trying to edit the record")  
+  finally:
+    db.session.close()
+  
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
