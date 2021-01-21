@@ -549,8 +549,10 @@ def edit_artist(artist_id):
   # TODO: populate form with fields from artist with ID <artist_id>
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
+#Done
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
+  
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
   
@@ -571,10 +573,13 @@ def edit_artist_submission(artist_id):
   
   return redirect(url_for('show_artist', artist_id=artist_id))
 
+
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
-  form = VenueForm()
-  venue={
+  venue = Venue.query.filter_by(id=venue_id).first_or_404()
+  form = VenueForm(obj=venue)
+
+  mock_venue={
     "id": 1,
     "name": "The Musical Hop",
     "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
