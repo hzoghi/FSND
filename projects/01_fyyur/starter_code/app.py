@@ -399,7 +399,7 @@ def search_artists():
     }]
   }
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
-
+#Done
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
@@ -528,8 +528,11 @@ def show_artist(artist_id):
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  form = ArtistForm()
-  artist={
+  
+  artist = Artist.query.filter_by(id=artist_id).first_or_404()
+  form = ArtistForm(obj = artist)
+  
+  artist_mock={
     "id": 4,
     "name": "Guns N Petals",
     "genres": ["Rock n Roll"],
