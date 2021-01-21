@@ -600,6 +600,21 @@ def edit_venue(venue_id):
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
+  form = VenueForm(request.form)
+  
+
+  try:
+    venue = Venue.query.first_or_404(venue_id)
+    form.populate_obj(venue)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+    flash("Something went wrong while trying to edit the record")
+  finally:
+    db.session.close()
+  
   return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist
