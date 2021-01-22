@@ -727,6 +727,22 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
+  form = ShowForm(request.form)
+  error = False
+
+  try:
+    new_show = Show()
+    form.populate_obj(new_show)
+    db.session.add(new_show)
+    db.session.commit()
+    flash('Show was successfully listed!')
+  except:
+    error = True
+    print(sys.exc_info())
+    db.session.rollback()
+    flash('An error occurred. Show could not be listed.')
+  finally:
+    db.session.close()
 
   # on successful db insert, flash success
   flash('Show was successfully listed!')
