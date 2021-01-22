@@ -662,12 +662,24 @@ def create_artist_submission():
 #  Shows
 #  ----------------------------------------------------------------
 
+#Done
 @app.route('/shows')
 def shows():
   # displays list of shows at /shows
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
+  
+  shows = db.session.query(Show).all()
+  data = [{
+    "venue_id": show.venue_id,
+    "venue_name": show.venue.name,
+    "artist_id": show.artist_id,
+    "artist_name":show.artist.name,
+    "artist_image_link":show.artist.image_link,
+    "start_time": show.start_time.strftime("%Y%m%d")
+  }for show in shows]
+
+  mock_data=[{
     "venue_id": 1,
     "venue_name": "The Musical Hop",
     "artist_id": 4,
