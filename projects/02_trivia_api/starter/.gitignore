@@ -1,6 +1,11 @@
 .vscode
 __pycache__
 venv
+bin
+bin/*
+lib
+pyvenv.cfg
+include
 
 # OS generated files #
 ######################
