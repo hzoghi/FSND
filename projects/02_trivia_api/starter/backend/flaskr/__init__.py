@@ -114,6 +114,28 @@ def create_app(test_config=None):
   the form will clear and the question will appear at the end of the last page
   of the questions list in the "List" tab.  
   '''
+  @app.route('/questions/add', methods=['POST'])
+  def create_question():
+    body = request.get_json()
+    question_text = body.get('question', None)
+    answer = body.get('answer', None)
+    category = body.get('category', None)
+    difficulty = body.get('difficulty', None)
+    question = Question(question=question_text, answer=answer, category=category, difficulty=difficulty)
+    question.insert()
+    questions = Question.query.order_by(Question.id).all()
+    current_questions = paginate_items(request, questions)
+    categories = Category.query.order_by(Category.id).all()
+    categories_list = [category.type for category in categories]
+
+    return jsonify({
+        'success': True,
+        'created': question.id,
+        'questions': current_questions,
+        'total_questions': len(questions),
+        'categories': categories_list,
+        'current_category': None
+    })
 
   '''
   @TODO: 
@@ -125,7 +147,20 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
-  
+  @app.route('/questions', methods = ['POST'])
+  def search_question():
+    body = request.get_json()
+    search = body.get('searchTerm', None)
+    if search:
+      questions = Question.query.filter(Question.question.ilike('%{}%'.format(search))).all()
+      questions_list = [question.format() for question in questions]
+      return jsonify({
+        'success': True,
+        'questions': questions_list,
+        'total_questions': len(questions_list),
+        'current_category': None
+      })
+      
 
   '''
   @TODO: 
