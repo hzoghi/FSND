@@ -70,7 +70,6 @@ def create_app(test_config=None):
     categories = Category.query.order_by(Category.id).all()
     categories_list = [category.type for category in categories]
 
-
     if len(current_questions) == 0:
       abort(404)
 
@@ -90,6 +89,20 @@ def create_app(test_config=None):
   TEST: When you click the trash icon next to a question, the question will be removed.
   This removal will persist in the database and when you refresh the page. 
   '''
+  @app.route('/questions/<int:question_id>', methods = ['DELETE'])
+  def delete_question(question_id):
+    question = Question.query.filter(Question.id == question_id).one_or_none()
+    if question == None:
+      abort(404)
+    question.delete()
+    questions = Question.query.order_by(Question.id).all()
+    current_questions = paginate_items(request, questions)
+    result = {
+      'success':True,
+      'questions':current_questions,
+      'total_questions': len(questions),
+    }
+    return jsonify(result)
 
   '''
   @TODO: 
@@ -112,6 +125,7 @@ def create_app(test_config=None):
   only question that include that string within their question. 
   Try using the word "title" to start. 
   '''
+  
 
   '''
   @TODO: 
