@@ -42,15 +42,18 @@ def create_app(test_config=None):
   '''
   @app.route('/categories', methods = ['GET'])
   def retrive_categories():
-    categories = Category.query.order_by(Category.id).all()
-    results = {}
-    for category in categories:
-      results[category.id] = category.type
-    result = {
-      'success': True,
-      'categories': results
-    }
-    return jsonify(result)
+    try:
+      categories = Category.query.order_by(Category.id).all()
+      results = {}
+      for category in categories:
+        results[category.id] = category.type
+      result = {
+        'success': True,
+        'categories': results
+      }
+      return jsonify(result)
+    except:
+      abort(404)
 
   '''
   @TODO: 
@@ -96,15 +99,19 @@ def create_app(test_config=None):
     question = Question.query.filter(Question.id == question_id).one_or_none()
     if question == None:
       abort(404)
-    question.delete()
-    questions = Question.query.order_by(Question.id).all()
-    current_questions = paginate_items(request, questions)
-    result = {
-      'success':True,
-      'questions':current_questions,
-      'total_questions': len(questions),
-    }
-    return jsonify(result)
+    else:
+      try:
+        question.delete()
+        questions = Question.query.order_by(Question.id).all()
+        current_questions = paginate_items(request, questions)
+        result = {
+          'success':True,
+          'questions':current_questions,
+          'total_questions': len(questions),
+        }
+        return jsonify(result)
+      except:
+        abort(404)
 
   '''
   @TODO: 
@@ -260,7 +267,7 @@ def create_app(test_config=None):
         'success': False,
         'error': 400,
         'message': 'Bad request'
-    }), 422
+    }), 400
   return app
 
     
