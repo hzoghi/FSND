@@ -123,21 +123,23 @@ def create_app(test_config=None):
     answer = body.get('answer', None)
     category = body.get('category', None)
     difficulty = body.get('difficulty', None)
-    question = Question(question=question_text, answer=answer, category=category, difficulty=difficulty)
-    question.insert()
-    questions = Question.query.order_by(Question.id).all()
-    current_questions = paginate_items(request, questions)
-    categories = Category.query.order_by(Category.id).all()
-    categories_list = [category.type for category in categories]
-
-    return jsonify({
+    try:
+      question = Question(question=question_text, answer=answer, category=category, difficulty=difficulty)
+      question.insert()
+      questions = Question.query.order_by(Question.id).all()
+      current_questions = paginate_items(request, questions)
+      categories = Category.query.order_by(Category.id).all()
+      categories_list = [category.type for category in categories]
+      return jsonify({
         'success': True,
         'created': question.id,
         'questions': current_questions,
         'total_questions': len(questions),
         'categories': categories_list,
         'current_category': None
-    })
+        })
+    except:
+      abort(422)
 
   '''
   @TODO: 
@@ -153,15 +155,20 @@ def create_app(test_config=None):
   def search_question():
     body = request.get_json()
     search = body.get('searchTerm', None)
-    if search:
-      questions = Question.query.filter(Question.question.ilike('%{}%'.format(search))).all()
-      questions_list = [question.format() for question in questions]
-      return jsonify({
-        'success': True,
-        'questions': questions_list,
-        'total_questions': len(questions_list),
-        'current_category': None
-      })
+    if search != None:
+      try:
+        questions = Question.query.filter(Question.question.ilike('%{}%'.format(search))).all()
+        questions_list = [question.format() for question in questions]
+        return jsonify({
+          'success': True,
+          'questions': questions_list,
+          'total_questions': len(questions_list),
+          'current_category': None
+        })
+      except:
+        abort(404)
+    else:
+      abort(400)
       
 
   '''
@@ -174,17 +181,17 @@ def create_app(test_config=None):
   '''
   @app.route('/categories/<int:category_id>/questions')
   def retrieve_questions_by_category(category_id):
-    questions_in_category = Question.query.filter(Question.category == str(category_id)).all()
-    current_questions = paginate_items(request, questions_in_category)
-    categories = Category.query.all()
-    formatted_categories = [c.format() for c in categories]
-    
-    return jsonify({
-      'success':True,
-      'questions': current_questions,
-      'total_questions': len(questions_in_category),
-      'current_category':category_id
-      })
+    try:
+      questions_in_category = Question.query.filter(Question.category == str(category_id)).all()
+      current_questions = paginate_items(request, questions_in_category)
+      return jsonify({
+        'success':True,
+        'questions': current_questions,
+        'total_questions': len(questions_in_category),
+        'current_category':category_id
+        })
+    except:
+      abort(404)
 
 
 
@@ -247,6 +254,13 @@ def create_app(test_config=None):
       'message': 'Unprocessabe'
     }), 422
   
+  @app.errorhandler(400)
+  def bad_request(error):
+    return jsonify({
+        'success': False,
+        'error': 400,
+        'message': 'Bad request'
+    }), 422
   return app
 
     
