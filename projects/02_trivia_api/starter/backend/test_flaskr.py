@@ -3,7 +3,7 @@ import unittest
 import json
 from flask_sqlalchemy import SQLAlchemy
 
-from flaskr import create_app
+from flaskr import create_app, QUESTIONS_PER_PAGE
 from models import setup_db, Question, Category
 
 
@@ -33,6 +33,20 @@ class TriviaTestCase(unittest.TestCase):
     TODO
     Write at least one test for each test for successful operation and for expected errors.
     """
+    def test_paginate(self):
+        res = self.client.get('/questions?page=1')
+        data = json.loads(res.data)
+        self.assertTrue(data['success'])
+        self.assertEqual(len(data['questions']), QUESTIONS_PER_PAGE)
+    
+    def test_404_paginate(self):
+        res = self.client.get('/questions?page=1000')
+        data = json.loads(res.data)
+        self.assertEqual(data['success'], False)
+        self.assertEqual(data['error'], 404)
+        self.assertEqual(data['message'], 'Resource not found')
+
+
 
 
 # Make the tests conveniently executable
