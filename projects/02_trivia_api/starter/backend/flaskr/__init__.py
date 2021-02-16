@@ -189,6 +189,10 @@ def create_app(test_config=None):
   @app.route('/categories/<int:category_id>/questions')
   def retrieve_questions_by_category(category_id):
     try:
+      categories = Category.query.all()
+      category_ids = [category.id for category in categories]
+      if category_id not in category_ids:
+        abort(404)
       questions_in_category = Question.query.filter(Question.category == str(category_id)).all()
       current_questions = paginate_items(request, questions_in_category)
       return jsonify({
