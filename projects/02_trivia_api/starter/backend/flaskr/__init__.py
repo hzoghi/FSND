@@ -237,7 +237,10 @@ def create_app(test_config=None):
                 selected.append(question.format())
         if len(selected) != 0:
             result = random.choice(selected)
-            return jsonify({"question": result})
+            return jsonify({
+              'success': True,
+              "question": result
+            })
         else:
             return jsonify({"question": False})
       except:
