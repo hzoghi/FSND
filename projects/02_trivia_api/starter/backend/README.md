@@ -72,9 +72,12 @@ This README is missing documentation of your endpoints. Below is an example for 
 
 Endpoints
 GET '/categories'
-GET ...
-POST ...
-DELETE ...
+GET '/questions'
+GET '/categories/<category_id>/questions'
+POST '/questions/add'
+POST '/questions'
+POST '/quizzes'
+DELETE '/questions/<question_id>'
 
 GET '/categories'
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
@@ -87,7 +90,80 @@ GET '/categories'
 '5' : "Entertainment",
 '6' : "Sports"}
 
+GET '/questions'
+- Fetches a paginated list of questions, where each question's fields are formatted as key/value pairs
+- Request Argument: page=<page_number>
+- Returns: A json object with the below keys:
+    "success": is True if the call is successful
+    "questions": list of 10 paginated questions, each list item is a dictionary with field names as keys. 
+        example. {"id": 2, "question": "Who am I?", "answer": "me", "difficulty": 1, "category": 2}
+    "total_questions" int, total number of questions
+    "categories": list of categories
+
+GET '/categories/<category_id>/questions'
+- Fetches a paginated list of questions in the category specified by <category_id>, where each question's fields are formatted as key/value pairs
+- Request Argument: page=<page_number>
+- Returns: A json object with the below keys:
+    "success": is True if the call is successful
+    "questions": list of 10 paginated questions, each list item is a dictionary with field names as keys. 
+        example. {"id": 2, "question": "Who am I?", "answer": "me", "difficulty": 1, "category": 2}
+    "total_questions" int, total number of questions
+    "current_category": int <category_id>
+
+POST '/questions/add'
+- Receives the rquired values for a question in the json body and persists the question to the databas.
+- Request body:
+    "question": the question text
+    "answer": the answer text
+    "category": int, the id of the category
+    "difficulty" int, the difficulty score between 1 and 5 (5 being the most difficult)
+- Returns a json object with the following keys:
+    "success": is True if the call is successful
+    "created": The id of the question
+    "questions": list of 10 paginated questions, each list item is a dictionary with field names as keys. 
+        example. {"id": 2, "question": "Who am I?", "answer": "me", "difficulty": 1, "category": 2}
+    "total_questions" int, total number of questions
+    "categories": list of existing categories
+
+POST '/questions'
+- Receives: a json with a single dictionary with single key searchTerm. The value is the string which will be used to search the question text in the question field of the questions.
+- Fetches a list of questions, which contain the searchTerm. The search is case-insensitive
+- Returns: A json object with the below keys:
+    "success": is True if the call is successful
+    "questions": list of with the searchTerm in their question field, each list item is a dictionary with field names as keys. 
+        example. {"id": 2, "question": "Who am I?", "answer": "me", "difficulty": 1, "category": 2}
+    "total_questions" int, total number of questions
+
+POST '/quizzes'
+- Receives a json with a dictionary with two keys:
+    "previous-questions": list of the question ids that have been asked while the user is playing
+    "category_id": the id of the category of the questions for playing quizzes (0 for all categories)
+- Returns a json with the following keys:
+    "question": one random question from the specified category that is not among the previous questions
+    "success" is True if the call is successful
+
+DELETE '/questions/<question_id>'
+- Request argument: None
+- It deletes the question with the question_id
+- Returns a json dictionary as below:
+    "success" is True if the call is successful
+    "deleted": the id of the question that was deleted
+    "questions": list of 10 paginated questions, each list item is a dictionary with field names as keys. 
+        example. {"id": 2, "question": "Who am I?", "answer": "me", "difficulty": 1, "category": 2}
+    "total_questions" int, total number of questions
+
+
+
+
+
+
+
+
+
+
+
 ```
+
 
 
 ## Testing
