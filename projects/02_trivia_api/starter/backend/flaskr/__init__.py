@@ -106,6 +106,7 @@ def create_app(test_config=None):
         current_questions = paginate_items(request, questions)
         result = {
           'success':True,
+          'deleted': question_id,
           'questions':current_questions,
           'total_questions': len(questions),
         }
@@ -130,23 +131,24 @@ def create_app(test_config=None):
     answer = body.get('answer', None)
     category = body.get('category', None)
     difficulty = body.get('difficulty', None)
-    try:
-      question = Question(question=question_text, answer=answer, category=category, difficulty=difficulty)
-      question.insert()
-      questions = Question.query.order_by(Question.id).all()
-      current_questions = paginate_items(request, questions)
-      categories = Category.query.order_by(Category.id).all()
-      categories_list = [category.type for category in categories]
-      return jsonify({
-        'success': True,
-        'created': question.id,
-        'questions': current_questions,
-        'total_questions': len(questions),
-        'categories': categories_list,
-        'current_category': None
-        })
-    except:
-      abort(422)
+    if all(param for param in [question_text, answer, category, difficulty]):
+      try:
+        question = Question(question=question_text, answer=answer, category=category, difficulty=difficulty)
+        question.insert()
+        questions = Question.query.order_by(Question.id).all()
+        current_questions = paginate_items(request, questions)
+        categories = Category.query.order_by(Category.id).all()
+        categories_list = [category.type for category in categories]
+        return jsonify({
+          'success': True,
+          'created': question.id,
+          'questions': current_questions,
+          'total_questions': len(questions),
+          'categories': categories_list,
+          'current_category': None
+          })
+      except:
+        abort(422)
 
   '''
   @TODO: 

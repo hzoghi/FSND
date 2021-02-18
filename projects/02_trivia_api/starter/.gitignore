@@ -1,11 +1,14 @@
 .vscode
 __pycache__
-venv
+trivia_venv
 bin
 bin/*
 lib
 pyvenv.cfg
 include
+frontend/node_modules
+frontend/package-lock.json
+
 
 # OS generated files #
 ######################
