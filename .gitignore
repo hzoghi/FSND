@@ -1,6 +1,8 @@
 .vscode
 __pycache__
 venv
+projects/02_trivia_api/starter/frontend/package-lock.json
+
 
 # OS generated files #
 ######################
@@ -11,4 +13,3 @@ venv
 .Trashes
 ehthumbs.db
 Thumbs.db
-projects/02_trivia_api/starter/frontend/package-lock.json
