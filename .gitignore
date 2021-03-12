@@ -3,6 +3,7 @@ __pycache__
 venv
 projects/02_trivia_api/starter/frontend/package-lock.json
 BasicFlaskAuth/py37
+projects/03_coffee_shop_full_stack/cafe
 
 # OS generated files #
 ######################
