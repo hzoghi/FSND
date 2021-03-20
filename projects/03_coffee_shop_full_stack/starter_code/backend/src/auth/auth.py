@@ -71,7 +71,19 @@ def get_token_auth_header():
     return true otherwise
 '''
 def check_permissions(permission, payload):
-    raise Exception('Not Implemented')
+    if "permissions" not in payload:
+        raise AuthError({
+            'code':'permissions_missing',
+            'description': 'permissions are expected'
+            }, 403)
+    
+    if permission not in payload['permissions']:
+        raise AuthError({
+            'code':'not_authorized',
+            'description': 'permission is expected'
+            }, 403)
+
+    return True
 
 '''
 @TODO implement verify_decode_jwt(token) method
