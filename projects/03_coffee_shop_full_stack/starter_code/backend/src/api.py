@@ -36,7 +36,7 @@ def get_drinks():
     return jsonify({
         "success": True, 
         "drinks": drinks
-        })
+        }), 200
 
 '''
 @TODO implement endpoint
@@ -46,7 +46,17 @@ def get_drinks():
     returns status code 200 and json {"success": True, "drinks": drinks} where drinks is the list of drinks
         or appropriate status code indicating reason for failure
 '''
-
+@app.route('/drinks-detail')
+@requires_auth('get:drinks-detail')
+def get_drinks_detail():
+    #@TODO: implemenet errors and status code
+    drinks = []
+    drinks_obj = Drink.query.all()
+    drinks = [drink.long() for drink in drinks_obj]
+    return jsonify({
+        "success": True, 
+        "drinks": drinks
+        }), 200
 
 '''
 @TODO implement endpoint
@@ -57,6 +67,22 @@ def get_drinks():
     returns status code 200 and json {"success": True, "drinks": drink} where drink an array containing only the newly created drink
         or appropriate status code indicating reason for failure
 '''
+@app.route('/drinks', methods = ['POST'])
+@requires_auth('post:drinks')
+def create_drinks():
+    drink_title = request.json.get('title')
+    drink_recipe = request.json.get('recipe')
+    try:
+        new_drink = Drink(title = drink_title, recipe = drink_recipe)
+    except Exception as e:
+        print(e)
+        abort(404)
+    return jsonify({
+        'success': True, 
+        'drinks':new_drink.long()
+        }), 200
+
+
 
 
 '''
