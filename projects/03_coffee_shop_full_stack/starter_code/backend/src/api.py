@@ -151,3 +151,11 @@ def unprocessable(error):
 @TODO implement error handler for AuthError
     error handler should conform to general task above 
 '''
+@app.errorhandler(AuthError)
+def handle_auth_error(ex):
+    """
+    Receive the raised authorization error and propagates it as response
+    """
+    response = jsonify(ex.error)
+    response.status_code = ex.status_code
+    return response
