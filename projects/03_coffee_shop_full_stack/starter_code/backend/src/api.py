@@ -22,6 +22,7 @@ db_drop_and_create_all()
 @app.after_request
 def after_request(response):
     response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 ## ROUTES
 '''
