@@ -56,7 +56,7 @@ def get_drinks():
 '''
 @app.route('/drinks-detail')
 @requires_auth('get:drinks-detail')
-def get_drinks_detail():
+def get_drinks_detail(payload):
     #@TODO: implemenet errors and status code
     drinks = []
     drinks_obj = Drink.query.all()
@@ -77,7 +77,7 @@ def get_drinks_detail():
 '''
 @app.route('/drinks', methods = ['POST'])
 @requires_auth('post:drinks')
-def create_drinks():
+def create_drinks(payload):
     drink_title = request.json.get('title')
     drink_recipe = request.json.get('recipe')
     try:
@@ -87,7 +87,7 @@ def create_drinks():
         abort(404)
     return jsonify({
         'success': True, 
-        'drinks':new_drink.long()
+        'drinks':[new_drink.long()]
         }), 200
 
 
