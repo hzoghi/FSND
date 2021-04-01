@@ -81,7 +81,7 @@ def create_drinks(payload):
     drink_title = request.json.get('title')
     drink_recipe = request.json.get('recipe')
     try:
-        new_drink = Drink(title = drink_title, recipe = drink_recipe)
+        new_drink = Drink(title = drink_title, recipe = json.dumps(drink_recipe))
     except Exception as e:
         print(e)
         abort(404)
