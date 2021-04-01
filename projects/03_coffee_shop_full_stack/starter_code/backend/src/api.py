@@ -19,12 +19,12 @@ CORS(app)
 '''
 db_drop_and_create_all()
 
-@app.after_request
-def after_request(response):
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, True')
-    response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
+# @app.after_request
+# def after_request(response):
+#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, True')
+#     response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
+#     response.headers.add('Access-Control-Allow-Origin', '*')
+#     return response
 
 ## ROUTES
 '''
