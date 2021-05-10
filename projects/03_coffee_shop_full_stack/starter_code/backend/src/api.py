@@ -13,21 +13,16 @@ CORS(app)
 
 
 '''
+DONE
 @TODO uncomment the following line to initialize the datbase
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
 '''
 db_drop_and_create_all()
 
-# @app.after_request
-# def after_request(response):
-#     response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, True')
-#     response.headers.add('Access-Control-Allow-Methods', 'GET, PATCH, POST, DELETE, OPTIONS')
-#     response.headers.add('Access-Control-Allow-Origin', '*')
-#     return response
-
 ## ROUTES
 '''
+DONE
 @TODO implement endpoint
     GET /drinks
         it should be a public endpoint
@@ -39,7 +34,11 @@ db_drop_and_create_all()
 def get_drinks():
     #@TODO: implement errors
     drinks = []
-    drinks_obj = Drink.query.all()
+    try:
+        drinks_obj = Drink.query.all()
+    except Exception as e:
+        print(e)
+        abort(422)
     drinks = [drink.short() for drink in drinks_obj]
     return jsonify({
         "success": True, 
@@ -47,6 +46,7 @@ def get_drinks():
         }), 200
 
 '''
+DONE
 @TODO implement endpoint
     GET /drinks-detail
         it should require the 'get:drinks-detail' permission
@@ -59,7 +59,11 @@ def get_drinks():
 def get_drinks_detail(payload):
     #@TODO: implemenet errors and status code
     drinks = []
-    drinks_obj = Drink.query.all()
+    try:
+        drinks_obj = Drink.query.all()
+    except Exception as e:
+        print(e)
+        abort(422)
     drinks = [drink.long() for drink in drinks_obj]
     return jsonify({
         "success": True, 
@@ -67,6 +71,7 @@ def get_drinks_detail(payload):
         }), 200
 
 '''
+DONE
 @TODO implement endpoint
     POST /drinks
         it should create a new row in the drinks table
@@ -85,16 +90,14 @@ def create_drinks(payload):
         new_drink.insert()
     except Exception as e:
         print(e)
-        abort(404)
+        abort(422)
     return jsonify({
         'success': True, 
         'drinks':[new_drink.long()]
         }), 200
 
-
-
-
 '''
+DONE
 @TODO implement endpoint
     PATCH /drinks/<id>
         where <id> is the existing model id
@@ -128,10 +131,8 @@ def update_drink(payload, id):
         'drinks':[drink.long()]
     }), 200
 
-
-
-
 '''
+DONE
 @TODO implement endpoint
     DELETE /drinks/<id>
         where <id> is the existing model id
@@ -170,6 +171,7 @@ def unprocessable(error):
                     }), 422
 
 '''
+DONE
 @TODO implement error handlers using the @app.errorhandler(error) decorator
     each error handler should return (with approprate messages):
              jsonify({
@@ -193,6 +195,7 @@ def unprocessable(error):
                     }), 404
 
 '''
+DONE
 @TODO implement error handler for AuthError
     error handler should conform to general task above 
 '''
